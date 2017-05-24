@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">TempoAgora</string>
+    <string name="no_gps">Por favor ative o serviço de localização para uma precisão melhor da localização</string>
+    <string name="weather_title">Previsão do Tempo</string>
+    <string name="city">Cidade:</string>
+    <string name="latitude">Latitude:</string>
+</resources>
