@@ -4,4 +4,8 @@
     <string name="weather_title">Previsão do Tempo</string>
     <string name="city">Cidade:</string>
     <string name="latitude">Latitude:</string>
+    <string name="today">Hoje</string>
+    <string name="tomorrow">Amanhã</string>
+    <string name="error_location_unavailable">O serviço de localização está desativado</string>
+    <string name="error_fetch_weather">Erro de conexão</string>
 </resources>
