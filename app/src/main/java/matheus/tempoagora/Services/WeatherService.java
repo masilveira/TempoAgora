@@ -2,7 +2,6 @@ package matheus.tempoagora.Services;
 
 import com.google.gson.annotations.SerializedName;
 
-import org.apache.http.HttpException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,12 +121,12 @@ public class WeatherService {
          * The web service always returns a HTTP header code of 200 and communicates errors
          * through a 'cod' field in the JSON payload of the response body.
          */
-        public Observable filterWebServiceErrors() {
+        Observable filterWebServiceErrors() {
             if (httpCode == 200) {
                 return Observable.just(this);
             } else {
                 return Observable.error(
-                        new HttpException("There was a problem fetching the weather data."));
+                        new Exception("There was a problem fetching the weather data."));
             }
         }
     }
@@ -137,16 +136,16 @@ public class WeatherService {
      */
     private class CurrentWeatherDataEnvelope extends WeatherDataEnvelope {
         @SerializedName("name")
-        public String locationName;
+        String locationName;
         @SerializedName("dt")
-        public long timestamp;
-        public ArrayList<Weather> weather;
-        public Main main;
+        long timestamp;
+         ArrayList<Weather> weather;
+         Main main;
 
         class Main {
-            public float temp;
-            public float temp_min;
-            public float temp_max;
+             float temp;
+             float temp_min;
+             float temp_max;
         }
     }
 
@@ -154,23 +153,23 @@ public class WeatherService {
      * Data structure for weather forecast results returned by the web service.
      */
     private class WeatherForecastListDataEnvelope extends WeatherDataEnvelope {
-        public Location city;
-        public ArrayList<ForecastDataEnvelope> list;
+         Location city;
+         ArrayList<ForecastDataEnvelope> list;
 
         class Location {
-            public String name;
+             String name;
         }
 
         class ForecastDataEnvelope {
             @SerializedName("dt")
-            public long timestamp;
-            public Temperature temp;
-            public ArrayList<Weather> weather;
+             long timestamp;
+             Temperature temp;
+             ArrayList<Weather> weather;
         }
 
         class Temperature {
-            public float min;
-            public float max;
+             float min;
+             float max;
         }
     }
 }
