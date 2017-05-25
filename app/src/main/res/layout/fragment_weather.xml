@@ -3,6 +3,7 @@
     tools:context=".WeatherActivity"
     android:id="@+id/swipe_refresh_container"
     android:layout_width="match_parent"
+    android:background="@android:color/white"
     android:layout_height="match_parent">
     <RelativeLayout
         android:layout_width="match_parent"

@@ -49,6 +49,16 @@ public class WeatherFragment extends Fragment {
     private TextView mLocationNameTextView;
     private TextView mCurrentTemperatureTextView;
     private ListView mForecastListView;
+    private String city = null;
+
+    public static WeatherFragment newInstance(String city) {
+
+        Bundle args = new Bundle();
+        WeatherFragment fragment = new WeatherFragment();
+        fragment.setArguments(args);
+        fragment.city = city;
+        return fragment;
+    }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
@@ -90,80 +100,118 @@ public class WeatherFragment extends Fragment {
 
     private void updateWeather() {
         mSwipeRefreshLayout.setRefreshing(true);
+        if (city != null) {
+            final WeatherService weatherService = new WeatherService();
 
-        final LocationManager locationManager = (LocationManager) getActivity()
-                .getSystemService(Context.LOCATION_SERVICE);
-        final LocationService locationService = new LocationService(locationManager, getActivity().getApplication());
-        final Observable<HashMap<String, WeatherForecast>> fetchDataObservable = locationService.getLocation()
-                .timeout(LOCATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
-                .flatMap(new Func1<Location, Observable<HashMap<String, WeatherForecast>>>() {
-                    @Override
-                    public Observable<HashMap<String, WeatherForecast>> call(final Location location) {
-                        final WeatherService weatherService = new WeatherService();
-                        final double longitude = location.getLongitude();
-                        final double latitude = location.getLatitude();
-
-                        return Observable.zip(
-                                weatherService.fetchCurrentWeather(longitude, latitude),
-                                weatherService.fetchWeatherForecasts(longitude, latitude),
-                                new Func2<CurrentWeather, List<WeatherForecast>,
-                                        HashMap<String, WeatherForecast>>() {
-                                    @Override
-                                    public HashMap call(final CurrentWeather currentWeather,
-                                                        final List<WeatherForecast> weatherForecasts) {
-                                        HashMap<String, Object> weatherData = new HashMap<>();
-                                        weatherData.put(KEY_CURRENT_WEATHER, currentWeather);
-                                        weatherData.put(KEY_WEATHER_FORECASTS, weatherForecasts);
-                                        return weatherData;
-                                    }
+            mCompositeSubscription.add(Observable.zip(
+                    weatherService.fetchCurrentWeather(city),
+                    weatherService.fetchWeatherForecasts(city),
+                    new Func2<CurrentWeather, List<WeatherForecast>,
+                            HashMap<String, WeatherForecast>>() {
+                        @Override
+                        public HashMap call(final CurrentWeather currentWeather,
+                                            final List<WeatherForecast> weatherForecasts) {
+                            HashMap<String, Object> weatherData = new HashMap<>();
+                            weatherData.put(KEY_CURRENT_WEATHER, currentWeather);
+                            weatherData.put(KEY_WEATHER_FORECASTS, weatherForecasts);
+                            return weatherData;
+                        }
+                    }
+            )                    .subscribeOn(Schedulers.newThread())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
+                                @Override
+                                public void onNext(final HashMap<String, WeatherForecast> weatherData) {
+                                    final CurrentWeather currentWeather = (CurrentWeather) weatherData
+                                            .get(KEY_CURRENT_WEATHER);
+                                    mLocationNameTextView.setText(currentWeather.getLocationName());
+                                    mCurrentTemperatureTextView.setText(
+                                            TemperatureFormatter.format(currentWeather.getTemperature()));
+                                    final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
+                                            weatherData.get(KEY_WEATHER_FORECASTS);
+                                    final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)
+                                            mForecastListView.getAdapter();
+                                    adapter.clear();
+                                    adapter.addAll(weatherForecasts);
                                 }
-                        );
-                    }
-                });
 
-        mCompositeSubscription.add(fetchDataObservable
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
-                    @Override
-                    public void onNext(final HashMap<String, WeatherForecast> weatherData) {
-                        final CurrentWeather currentWeather = (CurrentWeather) weatherData
-                                .get(KEY_CURRENT_WEATHER);
-                        mLocationNameTextView.setText(currentWeather.getLocationName());
-                        mCurrentTemperatureTextView.setText(
-                                TemperatureFormatter.format(currentWeather.getTemperature()));
-                        final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
-                                weatherData.get(KEY_WEATHER_FORECASTS);
-                        final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)
-                                mForecastListView.getAdapter();
-                        adapter.clear();
-                        adapter.addAll(weatherForecasts);
-                    }
+                                @Override
+                                public void onCompleted() {
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                }
 
-                    @Override
-                    public void onCompleted() {
-                        mSwipeRefreshLayout.setRefreshing(false);
-                    }
+                                @Override
+                                public void onError(final Throwable error) {
+                                    mSwipeRefreshLayout.setRefreshing(false);
+                                    Crouton.makeText(getActivity(),
+                                            R.string.error_fetch_weather, Style.ALERT).show();
+                                    error.printStackTrace();
+                                }
+                            })
+            );
+        } else {
+            final LocationManager locationManager = (LocationManager) getActivity()
+                    .getSystemService(Context.LOCATION_SERVICE);
+            final LocationService locationService = new LocationService(locationManager, getActivity().getApplication());
+            final Observable<HashMap<String, WeatherForecast>> fetchDataObservable = locationService.getLocation()
+                    .timeout(LOCATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                    .flatMap(new Func1<Location, Observable<HashMap<String, WeatherForecast>>>() {
+                        @Override
+                        public Observable<HashMap<String, WeatherForecast>> call(final Location location) {
+                            final WeatherService weatherService = new WeatherService();
+                            final double longitude = location.getLongitude();
+                            final double latitude = location.getLatitude();
 
-                    @Override
-                    public void onError(final Throwable error) {
-                        mSwipeRefreshLayout.setRefreshing(false);
+                            return Observable.zip(
+                                    weatherService.fetchCurrentWeather(longitude, latitude),
+                                    weatherService.fetchWeatherForecasts(longitude, latitude),
+                                    new Func2<CurrentWeather, List<WeatherForecast>,
+                                            HashMap<String, WeatherForecast>>() {
+                                        @Override
+                                        public HashMap call(final CurrentWeather currentWeather,
+                                                            final List<WeatherForecast> weatherForecasts) {
+                                            HashMap<String, Object> weatherData = new HashMap<>();
+                                            weatherData.put(KEY_CURRENT_WEATHER, currentWeather);
+                                            weatherData.put(KEY_WEATHER_FORECASTS, weatherForecasts);
+                                            return weatherData;
+                                        }
+                                    }
+                            );
+                        }
+                    });
+            mCompositeSubscription.add(fetchDataObservable
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
+                        @Override
+                        public void onNext(final HashMap<String, WeatherForecast> weatherData) {
+                            final CurrentWeather currentWeather = (CurrentWeather) weatherData
+                                    .get(KEY_CURRENT_WEATHER);
+                            mLocationNameTextView.setText(currentWeather.getLocationName());
+                            mCurrentTemperatureTextView.setText(
+                                    TemperatureFormatter.format(currentWeather.getTemperature()));
+                            final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
+                                    weatherData.get(KEY_WEATHER_FORECASTS);
+                            final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)
+                                    mForecastListView.getAdapter();
+                            adapter.clear();
+                            adapter.addAll(weatherForecasts);
+                        }
 
-                        if (error instanceof TimeoutException) {
-                            Crouton.makeText(getActivity(),
-                                    R.string.error_location_unavailable, Style.ALERT).show();
-                        } else if (error instanceof RetrofitError
-                                || error instanceof Exception) {
+                        @Override
+                        public void onCompleted() {
+                            mSwipeRefreshLayout.setRefreshing(false);
+                        }
+
+                        @Override
+                        public void onError(final Throwable error) {
+                            mSwipeRefreshLayout.setRefreshing(false);
                             Crouton.makeText(getActivity(),
                                     R.string.error_fetch_weather, Style.ALERT).show();
                             error.printStackTrace();
-                        } else {
-                            Log.e(TAG, error.getMessage());
-                            error.printStackTrace();
-                            throw new RuntimeException("See inner exception");
                         }
-                    }
-                })
-        );
+                    })
+            );
+        }
     }
 }
