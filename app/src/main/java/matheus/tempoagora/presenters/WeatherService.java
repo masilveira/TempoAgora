@@ -1,4 +1,4 @@
-package matheus.tempoagora.Services;
+package matheus.tempoagora.presenters;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -6,8 +6,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 
-import matheus.tempoagora.Models.CurrentWeather;
-import matheus.tempoagora.Models.WeatherForecast;
+import matheus.tempoagora.models.CurrentWeather;
+import matheus.tempoagora.models.WeatherForecast;
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.http.GET;
@@ -16,7 +16,6 @@ import rx.Observable;
 import rx.functions.Func1;
 
 public class WeatherService {
-    // We are implementing against version 2.5 of the Open Weather Map web service.
     private static final String WEB_SERVICE_BASE_URL = "http://api.openweathermap.org/data/2.5";
     private static final String API_KEY = "ca3f3f3b4c5fe0541d35f77df61292ad";
     private final OpenWeatherMapWebService mWebService;
@@ -39,11 +38,11 @@ public class WeatherService {
     }
 
     private interface OpenWeatherMapWebService {
-        @GET("/weather?units=metric&apikey=" + API_KEY)
+        @GET("/weather?units=metric&apikey=" + API_KEY + "&lang=pt")
         Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("lon") double longitude,
                                                                    @Query("lat") double latitude);
 
-        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY)
+        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY + "&lang=pt")
         Observable<WeatherForecastListDataEnvelope> fetchWeatherForecasts(
                 @Query("lon") double longitude, @Query("lat") double latitude);
     }
@@ -67,8 +66,8 @@ public class WeatherService {
                     @Override
                     public CurrentWeather call(final CurrentWeatherDataEnvelope data) {
                         return new CurrentWeather(data.locationName, data.timestamp,
-                                data.weather.get(0).description, data.main.temp,
-                                data.main.temp_min, data.main.temp_max);
+                                data.weather.get(0).icon, data.weather.get(0).description, data.main.temp,
+                                data.main.temp_min, data.main.temp_max, data.main.humidity, data.sys.sunrise, data.sys.sunset);
                     }
                 });
     }
@@ -96,7 +95,7 @@ public class WeatherService {
 
                         for (WeatherForecastListDataEnvelope.ForecastDataEnvelope data : listData.list) {
                             final WeatherForecast weatherForecast = new WeatherForecast(
-                                    listData.city.name, data.timestamp, data.weather.get(0).description,
+                                    listData.city.name, data.timestamp, data.weather.get(0).icon, data.weather.get(0).description,
                                     data.temp.min, data.temp.max);
                             weatherForecasts.add(weatherForecast);
                         }
@@ -106,21 +105,15 @@ public class WeatherService {
                 });
     }
 
-    /**
-     * Base class for results returned by the weather web service.
-     */
     private class WeatherDataEnvelope {
         @SerializedName("cod")
         private int httpCode;
 
         class Weather {
+            String icon;
             String description;
         }
 
-        /**
-         * The web service always returns a HTTP header code of 200 and communicates errors
-         * through a 'cod' field in the JSON payload of the response body.
-         */
         Observable filterWebServiceErrors() {
             if (httpCode == 200) {
                 return Observable.just(this);
@@ -131,45 +124,48 @@ public class WeatherService {
         }
     }
 
-    /**
-     * Data structure for current weather results returned by the web service.
-     */
     private class CurrentWeatherDataEnvelope extends WeatherDataEnvelope {
         @SerializedName("name")
         String locationName;
         @SerializedName("dt")
         long timestamp;
-         ArrayList<Weather> weather;
-         Main main;
+        ArrayList<Weather> weather;
+        Main main;
+        Sys sys;
 
         class Main {
-             float temp;
-             float temp_min;
-             float temp_max;
+            float temp;
+            float temp_min;
+            float temp_max;
+            int humidity;
+        }
+
+        class Sys {
+            long sunrise;
+            long sunset;
         }
     }
 
-    /**
-     * Data structure for weather forecast results returned by the web service.
-     */
+
+
     private class WeatherForecastListDataEnvelope extends WeatherDataEnvelope {
-         Location city;
-         ArrayList<ForecastDataEnvelope> list;
+        Location city;
+        ArrayList<ForecastDataEnvelope> list;
 
         class Location {
-             String name;
+            String name;
         }
 
         class ForecastDataEnvelope {
             @SerializedName("dt")
-             long timestamp;
-             Temperature temp;
-             ArrayList<Weather> weather;
+            long timestamp;
+            Temperature temp;
+            ArrayList<Weather> weather;
         }
 
         class Temperature {
-             float min;
-             float max;
+            float min;
+            float max;
         }
     }
 }

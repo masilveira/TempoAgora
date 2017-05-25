@@ -8,4 +8,5 @@
     <string name="tomorrow">Amanhã</string>
     <string name="error_location_unavailable">O serviço de localização está desativado</string>
     <string name="error_fetch_weather">Erro de conexão</string>
+    <string name="weather_descriptor">Clima</string>
 </resources>

@@ -1,4 +1,4 @@
-package matheus.tempoagora;
+package matheus.tempoagora.views.fragments;
 
 import android.app.Fragment;
 import android.content.Context;
@@ -21,11 +21,13 @@ import java.util.concurrent.TimeoutException;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
-import matheus.tempoagora.Helpers.TemperatureFormatter;
-import matheus.tempoagora.Models.CurrentWeather;
-import matheus.tempoagora.Models.WeatherForecast;
-import matheus.tempoagora.Services.LocationService;
-import matheus.tempoagora.Services.WeatherService;
+import matheus.tempoagora.R;
+import matheus.tempoagora.views.adapters.WeatherForecastListAdapter;
+import matheus.tempoagora.views.formatters.TemperatureFormatter;
+import matheus.tempoagora.models.CurrentWeather;
+import matheus.tempoagora.models.WeatherForecast;
+import matheus.tempoagora.presenters.LocationService;
+import matheus.tempoagora.presenters.WeatherService;
 import retrofit.RetrofitError;
 import rx.Observable;
 import rx.Subscriber;
@@ -86,19 +88,12 @@ public class WeatherFragment extends Fragment {
         super.onDestroyView();
     }
 
-
-
-    /**
-     * Get weather data for the current location and update the UI.
-     */
     private void updateWeather() {
         mSwipeRefreshLayout.setRefreshing(true);
 
         final LocationManager locationManager = (LocationManager) getActivity()
                 .getSystemService(Context.LOCATION_SERVICE);
         final LocationService locationService = new LocationService(locationManager, getActivity().getApplication());
-
-        // Get our current location.
         final Observable<HashMap<String, WeatherForecast>> fetchDataObservable = locationService.getLocation()
                 .timeout(LOCATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .flatMap(new Func1<Location, Observable<HashMap<String, WeatherForecast>>>() {
@@ -109,17 +104,13 @@ public class WeatherFragment extends Fragment {
                         final double latitude = location.getLatitude();
 
                         return Observable.zip(
-                                // Fetch current and 7 day forecasts for the location.
                                 weatherService.fetchCurrentWeather(longitude, latitude),
                                 weatherService.fetchWeatherForecasts(longitude, latitude),
-
-                                // Only handle the fetched results when both sets are available.
                                 new Func2<CurrentWeather, List<WeatherForecast>,
                                         HashMap<String, WeatherForecast>>() {
                                     @Override
                                     public HashMap call(final CurrentWeather currentWeather,
                                                         final List<WeatherForecast> weatherForecasts) {
-
                                         HashMap<String, Object> weatherData = new HashMap<>();
                                         weatherData.put(KEY_CURRENT_WEATHER, currentWeather);
                                         weatherData.put(KEY_WEATHER_FORECASTS, weatherForecasts);
@@ -136,14 +127,11 @@ public class WeatherFragment extends Fragment {
                 .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
                     @Override
                     public void onNext(final HashMap<String, WeatherForecast> weatherData) {
-                        // Update UI with current weather.
                         final CurrentWeather currentWeather = (CurrentWeather) weatherData
                                 .get(KEY_CURRENT_WEATHER);
                         mLocationNameTextView.setText(currentWeather.getLocationName());
                         mCurrentTemperatureTextView.setText(
                                 TemperatureFormatter.format(currentWeather.getTemperature()));
-
-                        // Update weather forecast list.
                         final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
                                 weatherData.get(KEY_WEATHER_FORECASTS);
                         final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)

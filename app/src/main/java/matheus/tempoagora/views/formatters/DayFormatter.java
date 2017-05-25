@@ -1,4 +1,4 @@
-package matheus.tempoagora.Helpers;
+package matheus.tempoagora.views.formatters;
 
 import android.content.Context;
 

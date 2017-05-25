@@ -1,4 +1,4 @@
-package matheus.tempoagora.Services;
+package matheus.tempoagora.presenters;
 
 import android.Manifest;
 import android.app.Application;

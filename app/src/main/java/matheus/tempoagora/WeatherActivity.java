@@ -3,6 +3,8 @@ package matheus.tempoagora;
 import android.app.Activity;
 import android.os.Bundle;
 
+import matheus.tempoagora.views.fragments.WeatherFragment;
+
 
 public class WeatherActivity extends Activity {
 

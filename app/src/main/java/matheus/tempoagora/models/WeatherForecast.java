@@ -1,23 +1,26 @@
-package matheus.tempoagora.Models;
+package matheus.tempoagora.models;
 
 public class WeatherForecast {
     private final String mLocationName;
     private final long mTimestamp;
     private final String mDescription;
+    private final String mIconUrl;
     private final float mMinimumTemperature;
     private final float mMaximumTemperature;
 
     public WeatherForecast(final String locationName,
                            final long timestamp,
-                           final String description,
+                           final String iconUrl,
+                           final String desccription,
                            final float minimumTemperature,
                            final float maximumTemperature) {
 
         mLocationName = locationName;
         mTimestamp = timestamp;
+        mDescription = desccription;
         mMinimumTemperature = minimumTemperature;
         mMaximumTemperature = maximumTemperature;
-        mDescription = description;
+        mIconUrl = iconUrl;
     }
 
     public String getLocationName() {
@@ -28,8 +31,8 @@ public class WeatherForecast {
         return mTimestamp;
     }
 
-    public String getDescription() {
-        return mDescription;
+    public String getmIconUrl() {
+        return mIconUrl;
     }
 
     public float getMinimumTemperature() {
@@ -38,5 +41,9 @@ public class WeatherForecast {
 
     public float getMaximumTemperature() {
         return mMaximumTemperature;
+    }
+
+    public String getDescription() {
+        return mDescription;
     }
 }
