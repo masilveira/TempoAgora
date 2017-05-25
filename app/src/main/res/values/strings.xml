@@ -10,4 +10,6 @@
     <string name="error_fetch_weather">Erro de conexão</string>
     <string name="weather_descriptor">Clima</string>
     <string name="london">Londres</string>
+    <string name="facebook_app_id">1880459648881046</string>
+    <string name="fb_login_protocol_scheme">fb1880459648881046</string>
 </resources>
