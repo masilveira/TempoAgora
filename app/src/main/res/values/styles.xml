@@ -16,12 +16,13 @@
 
     <style name="LocationText" parent="BaseText">
         <item name="android:textSize">@dimen/location_text</item>
+        <item name="android:textColor">@color/primary_light</item>
         <item name="android:ellipsize">none</item>
     </style>
 
     <style name="CurrentTemperatureText" parent="BaseText">
         <item name="android:textSize">@dimen/current_temperature_text</item>
-        <item name="android:textColor">@color/brand_main</item>
+        <item name="android:textColor">@color/colorPrimaryDark</item>
         <item name="android:maxLines">1</item>
         <item name="android:ellipsize">none</item>
     </style>
