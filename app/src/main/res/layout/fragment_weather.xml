@@ -21,16 +21,17 @@
                 android:id="@+id/weather_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
                 android:textColor="@android:color/white"
                 android:layout_alignParentTop="true"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="80sp"
+                android:textSize="40sp"
                 />
             <TextView
                 android:id="@+id/location_name"
-                android:layout_width="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_width="match_parent"
+                android:layout_toEndOf="@+id/weather_icon"
+                android:gravity="center"
+                android:layout_toStartOf="@+id/current_temperature"
                 android:textColor="@android:color/white"
                 android:textAppearance="@style/LocationText"
                 android:layout_height="wrap_content"
@@ -41,17 +42,18 @@
                 android:id="@+id/current_temperature"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
+                android:layout_alignParentEnd="true"
                 android:textColor="@android:color/white"
-                android:layout_below="@+id/details"
                 android:textAppearance="?android:attr/textAppearanceLarge"
-                android:textSize="80sp" />
+                android:textSize="40sp" />
             <TextView
                 android:id="@+id/details"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:layout_below="@+id/location_name"
-                android:layout_centerHorizontal="true"
+                android:layout_toEndOf="@+id/weather_icon"
+                android:layout_toStartOf="@+id/current_temperature"
                 android:textColor="@android:color/white"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
@@ -62,9 +64,9 @@
                 android:id="@+id/humidity"
                 android:drawableStart="@drawable/ic_humidity"
                 android:layout_width="wrap_content"
+                android:layout_below="@+id/weather_icon"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
-                android:layout_above="@+id/pressure"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
             <TextView
@@ -74,7 +76,7 @@
                 android:drawableStart="@drawable/ic_pressure"
                 android:textColor="@android:color/white"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_alignBaseline="@+id/current_temperature"
+                android:layout_below="@id/humidity"
                 android:layout_alignParentStart="true" />
 
 
@@ -83,9 +85,9 @@
                 android:drawableStart="@drawable/ic_sunrise"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:layout_above="@+id/sunset"
                 android:layout_alignParentEnd="true"
+                android:textColor="@android:color/white"
+                android:layout_below="@id/current_temperature"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 />
             <TextView
@@ -93,15 +95,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableStart="@drawable/ic_sunset"
+                android:layout_alignParentEnd="true"
                 android:textColor="@android:color/white"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:layout_alignBaseline="@+id/current_temperature"
-                android:layout_alignParentEnd="true" />
+                android:layout_below="@+id/sunrise" />
 
         </RelativeLayout>
 
         <ListView
-            android:background="@color/primary_light"
             android:id="@+id/weather_forecast_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
