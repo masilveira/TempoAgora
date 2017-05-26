@@ -1,8 +1,7 @@
-package matheus.tempoagora.presenters;
+package matheus.tempoagora.controllers.services;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -12,11 +11,13 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 
+import java.util.concurrent.TimeoutException;
+
 import rx.Observable;
 import rx.Subscriber;
 
 public class LocationService {
-    private static final int PERMISSION_LOCATION = 32323;
+    public static final int PERMISSION_LOCATION = 32323;
     private final LocationManager mLocationManager;
     private Activity mActivity;
 
@@ -64,7 +65,7 @@ public class LocationService {
                     Looper.loop();
                 }
                 else{
-                    subscriber.unsubscribe();
+                    subscriber.onError( new SecurityException());
                     ActivityCompat.requestPermissions(mActivity,
                             new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                             PERMISSION_LOCATION);

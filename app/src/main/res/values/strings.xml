@@ -1,16 +1,24 @@
 <resources>
     <string name="app_name">Tempo Agora</string>
-    <string name="no_gps">Por favor ative o serviço de localização para uma precisão melhor da localização</string>
+    <string name="no_gps_title">Serviço de Localização Desativado</string>
+    <string name="no_gps">Por favor ative o serviço de localização.</string>
     <string name="weather_title">Previsão do Tempo</string>
     <string name="city">Cidade:</string>
     <string name="latitude">Latitude:</string>
     <string name="today">Hoje</string>
     <string name="tomorrow">Amanhã</string>
     <string name="error_location_unavailable">O serviço de localização está desativado</string>
-    <string name="error_fetch_weather">Erro de conexão</string>
+    <string name="error_no_connection">Erro de conexão</string>
     <string name="weather_descriptor">Clima</string>
     <string name="london">Londres</string>
     <string name="facebook_app_id">1880459648881046</string>
     <string name="fb_login_protocol_scheme">fb1880459648881046</string>
     <string name="welcome">Bem vindo (a) </string>
+    <string name="logout">Sair</string>
+    <string name="ask_logout">Deseja realmente sair?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancelar</string>
+    <string name="permission_denied">Por favor ative a permissão de acesso a localização</string>
+    <string name="ask_open_gps">Deseja abrir a tela de configurações de localização para ativar o serviço?</string>
+    <string name="goto_gps_settings">IR PARA A TELA DE CONFIGURAÇÕES</string>
 </resources>

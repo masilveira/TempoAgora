@@ -1,4 +1,4 @@
-package matheus.tempoagora.presenters;
+package matheus.tempoagora.controllers.services;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -17,7 +17,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 public class WeatherService {
-    private static final String DISPLAY_LANGUAGE = Locale.getDefault().getDisplayLanguage();
+    private static final String DISPLAY_LANGUAGE = Locale.getDefault().getLanguage();
     private static final String WEB_SERVICE_BASE_URL = "http://api.openweathermap.org/data/2.5";
     private static final String API_KEY = "ca3f3f3b4c5fe0541d35f77df61292ad";
     private final OpenWeatherMapWebService mWebService;
