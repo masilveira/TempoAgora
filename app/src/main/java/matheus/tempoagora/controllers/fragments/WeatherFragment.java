@@ -1,17 +1,20 @@
 package matheus.tempoagora.controllers.fragments;
 
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.provider.Settings;
-import android.support.v4.app.Fragment;
-import android.content.Context;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +22,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import de.keyboardsurfer.android.widget.crouton.Crouton;
 import de.keyboardsurfer.android.widget.crouton.Style;
 import matheus.tempoagora.R;
 import matheus.tempoagora.controllers.services.ConnectionStatusService;
-import matheus.tempoagora.views.adapters.WeatherForecastListAdapter;
-import matheus.tempoagora.views.formatters.TemperatureFormatter;
-import matheus.tempoagora.models.CurrentWeather;
-import matheus.tempoagora.models.WeatherForecast;
 import matheus.tempoagora.controllers.services.LocationService;
 import matheus.tempoagora.controllers.services.WeatherService;
+import matheus.tempoagora.models.CurrentWeather;
+import matheus.tempoagora.models.WeatherForecast;
+import matheus.tempoagora.views.adapters.WeatherForecastListAdapter;
+import matheus.tempoagora.views.formatters.UnityFormatter;
 import rx.Observable;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
@@ -46,14 +51,21 @@ public class WeatherFragment extends Fragment {
     private static final String KEY_CURRENT_WEATHER = "key_current_weather";
     private static final String KEY_WEATHER_FORECASTS = "key_weather_forecasts";
     private static final long LOCATION_TIMEOUT_SECONDS = 20;
-    private static final String TAG = WeatherFragment.class.getCanonicalName();
 
     private CompositeSubscription mCompositeSubscription;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private TextView mLocationNameTextView;
+    private TextView mPressureTextView;
+    private TextView mWeatherIconTextView;
+    private TextView mDetailsTextView;
+    private TextView mHumidityTextView;
     private TextView mCurrentTemperatureTextView;
     private ListView mForecastListView;
+    private TextView mSunriseTextView;
+    private TextView mSunsetTextView;
     private String city = null;
+
+
 
     public static WeatherFragment newInstance(String city) {
 
@@ -67,13 +79,20 @@ public class WeatherFragment extends Fragment {
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
+        Typeface weatherFont = Typeface.createFromAsset(getActivity().getAssets(), "fonts/weathericons-regular-webfont.ttf");
+
         mCompositeSubscription = new CompositeSubscription();
         final View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         mLocationNameTextView = (TextView) rootView.findViewById(R.id.location_name);
-        mCurrentTemperatureTextView = (TextView) rootView
-                .findViewById(R.id.current_temperature);
-
+        mCurrentTemperatureTextView = (TextView) rootView.findViewById(R.id.current_temperature);
+        mPressureTextView = (TextView) rootView.findViewById(R.id.pressure);
+        mWeatherIconTextView = (TextView) rootView.findViewById(R.id.weather_icon);
+        mWeatherIconTextView.setTypeface(weatherFont);
+        mDetailsTextView = (TextView) rootView.findViewById(R.id.details);
+        mHumidityTextView = (TextView) rootView.findViewById(R.id.humidity);
         mForecastListView = (ListView) rootView.findViewById(R.id.weather_forecast_list);
+        mSunriseTextView = (TextView) rootView.findViewById(R.id.sunrise);
+        mSunsetTextView = (TextView) rootView.findViewById(R.id.sunset);
         final WeatherForecastListAdapter adapter = new WeatherForecastListAdapter(
                 new ArrayList<WeatherForecast>(), getActivity());
         mForecastListView.setAdapter(adapter);
@@ -126,11 +145,16 @@ public class WeatherFragment extends Fragment {
                                 .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
                                     @Override
                                     public void onNext(final HashMap<String, WeatherForecast> weatherData) {
-                                        final CurrentWeather currentWeather = (CurrentWeather) weatherData
-                                                .get(KEY_CURRENT_WEATHER);
+                                        final CurrentWeather currentWeather = (CurrentWeather) weatherData.get(KEY_CURRENT_WEATHER);
                                         mLocationNameTextView.setText(currentWeather.getLocationName());
-                                        mCurrentTemperatureTextView.setText(
-                                                TemperatureFormatter.format(currentWeather.getTemperature()));
+                                        mCurrentTemperatureTextView.setText(UnityFormatter.toTemperature(currentWeather.getTemperature()));
+                                        mDetailsTextView.setText(currentWeather.getDescription().toUpperCase(Locale.getDefault()));
+                                        mHumidityTextView.setText(UnityFormatter.toHumidity(currentWeather.getmHumidity()));
+                                        mPressureTextView.setText(UnityFormatter.toPressure(currentWeather.getmPressure()));
+                                        mWeatherIconTextView.setText(Html.fromHtml(currentWeather.getmIcon()));
+                                        mSunriseTextView.setVisibility(View.GONE);
+                                        mSunsetTextView.setVisibility(View.GONE);
+
                                         final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
                                                 weatherData.get(KEY_WEATHER_FORECASTS);
                                         final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)
@@ -190,11 +214,16 @@ public class WeatherFragment extends Fragment {
                             .subscribe(new Subscriber<HashMap<String, WeatherForecast>>() {
                                 @Override
                                 public void onNext(final HashMap<String, WeatherForecast> weatherData) {
-                                    final CurrentWeather currentWeather = (CurrentWeather) weatherData
-                                            .get(KEY_CURRENT_WEATHER);
+                                    final CurrentWeather currentWeather = (CurrentWeather) weatherData.get(KEY_CURRENT_WEATHER);
                                     mLocationNameTextView.setText(currentWeather.getLocationName());
-                                    mCurrentTemperatureTextView.setText(
-                                            TemperatureFormatter.format(currentWeather.getTemperature()));
+                                    mCurrentTemperatureTextView.setText(UnityFormatter.toTemperature(currentWeather.getTemperature()));
+                                    mDetailsTextView.setText(currentWeather.getDescription().toUpperCase(Locale.getDefault()));
+                                    mHumidityTextView.setText(UnityFormatter.toHumidity(currentWeather.getmHumidity()));
+                                    mPressureTextView.setText(UnityFormatter.toPressure(currentWeather.getmPressure()));
+                                    mWeatherIconTextView.setText(Html.fromHtml(currentWeather.getmIcon()));
+                                    mSunriseTextView.setText(android.text.format.DateFormat.getTimeFormat(getContext()).format(new Date(currentWeather.getmSunrise() * 1000)));
+                                    mSunsetTextView.setText(android.text.format.DateFormat.getTimeFormat(getContext()).format(new Date(currentWeather.getmSunset() * 1000)));
+
                                     final List<WeatherForecast> weatherForecasts = (List<WeatherForecast>)
                                             weatherData.get(KEY_WEATHER_FORECASTS);
                                     final WeatherForecastListAdapter adapter = (WeatherForecastListAdapter)
@@ -237,7 +266,7 @@ public class WeatherFragment extends Fragment {
     }
     @Override
     public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case LocationService.PERMISSION_LOCATION: {
                 if (grantResults.length > 0

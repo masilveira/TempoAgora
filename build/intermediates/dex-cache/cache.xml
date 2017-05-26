@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/.android/build-cache/09322f4b7687bbf96a17f8d1882ace270facffc5/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="8a372c4191f80489770a231f7be4820b204b886a">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_3d72603813b047d4b50fd60c279aae11d7eef174/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-tasks/1.4.0/d85884acf6810a3bbbecb587f239005cbc846dc4/bolts-tasks-1.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d85884acf6810a3bbbecb587f239005cbc846dc4">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-tasks-1.4.0_515a6f747131f7101d6718528ae3ab28575f7dc0/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="058c5507b85ab0d0ee6690702cf20cc68ff74a5e">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_55c81e52605fc7cb37f391faed45d9b9ccb03b4e/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-applinks/1.4.0/8ad21bf21784dacce5f2043afb97218cc377e835/bolts-applinks-1.4.0.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="8ad21bf21784dacce5f2043afb97218cc377e835">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10/bolts-applinks-1.4.0_df15745822257d051d46a20365884923376afe14/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/.android/build-cache/88332948ac75309e0fee1c5c6adc31540f060576/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="d5cbc9214ee567ea6ef56fb2707d48e58d240fc2">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_5f58ba572caf6e049dc157e049b27328d3168227/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/.android/build-cache/f18540ab37b8f3d04ba8c419777d84c03809e785/output/jars/classes.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="94ba691efc31bf53264db0716d9c9ec03843ea31">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10/classes_7ae413380d0fd668e10c69a32d8d2526db86845b/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.3"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="/Users/Pharmalink/AndroidStudioProjects/TempoAgora/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_a3fcbe72c8142e1c4e6299376dc585f8dc1c7b17/classes.dex" />
+    </item>
+
+</items>

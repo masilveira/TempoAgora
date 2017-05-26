@@ -2,7 +2,9 @@ package matheus.tempoagora.views.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,15 +17,16 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 import matheus.tempoagora.R;
-import matheus.tempoagora.views.formatters.DayFormatter;
-import matheus.tempoagora.views.formatters.TemperatureFormatter;
+import matheus.tempoagora.views.formatters.UnityFormatter;
 import matheus.tempoagora.models.WeatherForecast;
 
 public class WeatherForecastListAdapter extends ArrayAdapter {
+    private Typeface weatherFont;
 
     public WeatherForecastListAdapter(final List<WeatherForecast> weatherForecasts,
                                       final Context context) {
         super(context, 0, weatherForecasts);
+        weatherFont = Typeface.createFromAsset(context.getAssets(), "fonts/weathericons-regular-webfont.ttf");
     }
 
     @Override
@@ -43,8 +46,9 @@ public class WeatherForecastListAdapter extends ArrayAdapter {
 
             viewHolder = new ViewHolder();
             viewHolder.dayTextView = (TextView) convertView.findViewById(R.id.day);
-            viewHolder.iconView = (ImageView) convertView
+            viewHolder.iconView = (TextView) convertView
                     .findViewById(R.id.icon);
+            viewHolder.iconView.setTypeface(weatherFont);
             viewHolder.descriptionTextView = (TextView) convertView
                     .findViewById(R.id.description);
             viewHolder.maximumTemperatureTextView = (TextView) convertView
@@ -58,34 +62,22 @@ public class WeatherForecastListAdapter extends ArrayAdapter {
 
         final WeatherForecast weatherForecast = (WeatherForecast) getItem(position);
 
-        final DayFormatter dayFormatter = new DayFormatter(getContext());
-        final String day = dayFormatter.format(weatherForecast != null ? weatherForecast.getTimestamp() : 0);
-        viewHolder.dayTextView.setText(day);
         if (weatherForecast != null) {
-            String iconUrl = "http://openweathermap.org/img/w/" + weatherForecast.getmIconUrl() + ".png";
-            Picasso.with(getContext()).load(iconUrl).into(viewHolder.iconView);
-        }
-        if (weatherForecast != null) {
-            viewHolder.descriptionTextView.setText(weatherForecast.getDescription());
-        }
-        if (weatherForecast != null) {
+            viewHolder.iconView.setText(Html.fromHtml(weatherForecast.getmIcon()));
+            viewHolder.dayTextView.setText(UnityFormatter.toDayOfWeek(weatherForecast.getTimestamp() * 1000));
+            viewHolder.descriptionTextView.setText(weatherForecast.getDescription().toUpperCase());
             viewHolder.maximumTemperatureTextView.setText(
-                    TemperatureFormatter.format(weatherForecast.getMaximumTemperature()));
-        }
-        if (weatherForecast != null) {
+                    UnityFormatter.toTemperature(weatherForecast.getMaximumTemperature()));
             viewHolder.minimumTemperatureTextView.setText(
-                    TemperatureFormatter.format(weatherForecast.getMinimumTemperature()));
+                    UnityFormatter.toTemperature(weatherForecast.getMinimumTemperature()));
         }
 
         return convertView;
     }
 
-    /**
-     * Cache to avoid doing expensive findViewById() calls for each getView().
-     */
     private class ViewHolder {
         private TextView dayTextView;
-        private ImageView iconView;
+        private TextView iconView;
         private TextView descriptionTextView;
         private TextView maximumTemperatureTextView;
         private TextView minimumTemperatureTextView;

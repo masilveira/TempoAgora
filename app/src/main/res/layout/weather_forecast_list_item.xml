@@ -3,6 +3,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:padding="@dimen/activity_vertical_margin"
     android:weightSum="4"
     android:orientation="horizontal">
 
@@ -12,6 +13,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         style="@style/WeatherForecastListItemText" />
     <TextView
         android:id="@+id/description"
@@ -19,12 +21,15 @@
         android:layout_width="0dp"
         android:textAlignment="center"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         style="@style/WeatherForecastListItemText" />
-    <ImageView
+    <TextView
         android:id="@+id/icon"
         android:layout_weight="1"
+        android:textAlignment="center"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:contentDescription="@string/weather_descriptor" />
 <LinearLayout
     android:layout_width="0dp"
@@ -34,6 +39,7 @@
     <TextView
         android:id="@+id/maximum_temperature"
         android:layout_weight="1"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="0dp"
         android:textAlignment="center"
         android:layout_height="wrap_content"
@@ -43,6 +49,7 @@
         android:id="@+id/minimum_temperature"
         android:layout_weight="1"
         android:layout_width="0dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
         android:textAlignment="center"
         android:layout_height="wrap_content"
         style="@style/WeatherForecastListItemTextDeEmphasis" />

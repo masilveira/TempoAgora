@@ -22,7 +22,7 @@
 
     <style name="LocationText" parent="BaseText">
         <item name="android:textSize">@dimen/location_text</item>
-        <item name="android:textColor">@color/primary_light</item>
+        <item name="android:textColor">@android:color/white</item>
         <item name="android:ellipsize">none</item>
     </style>
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">

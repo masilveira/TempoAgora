@@ -4,7 +4,7 @@ public class WeatherForecast {
     private final String mLocationName;
     private final long mTimestamp;
     private final String mDescription;
-    private final String mIconUrl;
+    private final String mIcon;
     private final float mMinimumTemperature;
     private final float mMaximumTemperature;
 
@@ -20,7 +20,7 @@ public class WeatherForecast {
         mDescription = desccription;
         mMinimumTemperature = minimumTemperature;
         mMaximumTemperature = maximumTemperature;
-        mIconUrl = iconUrl;
+        mIcon = iconUrl;
     }
 
     public String getLocationName() {
@@ -31,8 +31,8 @@ public class WeatherForecast {
         return mTimestamp;
     }
 
-    public String getmIconUrl() {
-        return mIconUrl;
+    public String getmIcon() {
+        return mIcon;
     }
 
     public float getMinimumTemperature() {
@@ -46,4 +46,7 @@ public class WeatherForecast {
     public String getDescription() {
         return mDescription;
     }
+
+
+
 }

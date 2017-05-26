@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -43,9 +44,11 @@ public class WeatherService {
 
         @GET("/weather?units=metric&apikey=" + API_KEY)
         Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("lon") double longitude,
-                                                                   @Query("lat") double latitude);
+                                                                   @Query("lat") double latitude,
+                                                                   @Query("lang") String language);
         @GET("/weather?units=metric&apikey=" + API_KEY)
-        Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("q") String city);
+        Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("q") String city,
+                                                                   @Query("lang") String language);
 
         @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY)
         Observable<WeatherForecastListDataEnvelope> fetchWeatherForecasts(
@@ -60,7 +63,7 @@ public class WeatherService {
 
     public Observable<CurrentWeather> fetchCurrentWeather(final double longitude,
                                                           final double latitude) {
-        return mWebService.fetchCurrentWeather(longitude, latitude)
+        return mWebService.fetchCurrentWeather(longitude, latitude, DISPLAY_LANGUAGE)
                 .flatMap(new Func1<CurrentWeatherDataEnvelope,
                         Observable<? extends CurrentWeatherDataEnvelope>>() {
 
@@ -75,7 +78,7 @@ public class WeatherService {
     }
 
     public Observable<CurrentWeather> fetchCurrentWeather(final String city) {
-        return mWebService.fetchCurrentWeather(city)
+        return mWebService.fetchCurrentWeather(city, DISPLAY_LANGUAGE)
                 .flatMap(new Func1<CurrentWeatherDataEnvelope,
                         Observable<? extends CurrentWeatherDataEnvelope>>() {
 
@@ -93,8 +96,8 @@ public class WeatherService {
         @Override
         public CurrentWeather call(final CurrentWeatherDataEnvelope data) {
             return new CurrentWeather(data.locationName, data.timestamp,
-                    data.weather.get(0).icon, data.weather.get(0).description, data.main.temp,
-                    data.main.temp_min, data.main.temp_max, data.main.humidity, data.sys.sunrise, data.sys.sunset);
+                    getWeatherIcon(data.weather.get(0).id), data.weather.get(0).description, data.main.temp,
+                    data.main.temp_min, data.main.temp_max, data.main.humidity , data.sys.sunrise, data.sys.sunset, data.main.pressure);
         }
     };
 
@@ -136,7 +139,7 @@ public class WeatherService {
 
             for (WeatherForecastListDataEnvelope.ForecastDataEnvelope data : listData.list) {
                 final WeatherForecast weatherForecast = new WeatherForecast(
-                        listData.city.name, data.timestamp, data.weather.get(0).icon, data.weather.get(0).description,
+                        listData.city.name, data.timestamp, getWeatherIcon(data.weather.get(0).id), data.weather.get(0).description,
                         data.temp.min, data.temp.max);
                 weatherForecasts.add(weatherForecast);
             }
@@ -151,6 +154,7 @@ public class WeatherService {
         class Weather {
             String icon;
             String description;
+            int id;
         }
 
         Observable filterWebServiceErrors() {
@@ -176,7 +180,8 @@ public class WeatherService {
             float temp;
             float temp_min;
             float temp_max;
-            int humidity;
+            String humidity;
+            String pressure;
         }
 
         class Sys {
@@ -185,6 +190,27 @@ public class WeatherService {
         }
     }
 
+    public String getWeatherIcon(int actualId){
+        int id = actualId / 100;
+        String icon = "";
+            switch(id) {
+                case 2 : icon = "&#xf01e;";
+                    break;
+                case 3 : icon = "&#xf01c;";
+                    break;
+                case 7 : icon = "&#xf014;";
+                    break;
+                case 8 : icon = "&#xf013;";
+                    break;
+                case 6 : icon = "&#xf01b;";
+                    break;
+                case 5 : icon = "&#xf019;";
+                    break;
+                default:
+                    icon = "&#xf02e;";
+        }
+        return icon;
+    }
 
 
     private class WeatherForecastListDataEnvelope extends WeatherDataEnvelope {

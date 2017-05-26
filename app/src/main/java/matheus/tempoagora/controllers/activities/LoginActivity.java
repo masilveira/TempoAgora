@@ -57,6 +57,7 @@ public class LoginActivity extends Activity {
                 });
                 loginButton.setVisibility(View.GONE);
             } else {
+                swipeRefreshLayout.setEnabled(false);
                 loginButton.setVisibility(View.VISIBLE);
                 loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
 
