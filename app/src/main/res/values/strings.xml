@@ -12,4 +12,5 @@
     <string name="london">Londres</string>
     <string name="facebook_app_id">1880459648881046</string>
     <string name="fb_login_protocol_scheme">fb1880459648881046</string>
+    <string name="welcome">Bem vindo (a) </string>
 </resources>

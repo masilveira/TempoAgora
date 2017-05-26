@@ -21,13 +21,13 @@ public class DayFormatter {
         final long milliseconds = unixTimestamp * MILLISECONDS_IN_SECONDS;
         String day;
 
-        if (isToday(milliseconds)) {
-            day = mContext.getResources().getString(R.string.today);
-        } else if (isTomorrow(milliseconds)) {
-            day = mContext.getResources().getString(R.string.tomorrow);
-        } else {
+//        if (isToday(milliseconds)) {
+//            day = mContext.getResources().getString(R.string.today);
+//        } else if (isTomorrow(milliseconds)) {
+//            day = mContext.getResources().getString(R.string.tomorrow);
+//        } else {
             day = getDayOfWeek(milliseconds);
-        }
+      //  }
 
         return day;
     }

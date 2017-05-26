@@ -1,6 +1,7 @@
 package matheus.tempoagora.views.fragments;
 
-import android.app.Fragment;
+
+import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -64,7 +65,6 @@ public class WeatherFragment extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
         mCompositeSubscription = new CompositeSubscription();
-
         final View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         mLocationNameTextView = (TextView) rootView.findViewById(R.id.location_name);
         mCurrentTemperatureTextView = (TextView) rootView
@@ -102,7 +102,7 @@ public class WeatherFragment extends Fragment {
         mSwipeRefreshLayout.setRefreshing(true);
         if (city != null) {
             final WeatherService weatherService = new WeatherService();
-
+            mCompositeSubscription.clear();
             mCompositeSubscription.add(Observable.zip(
                     weatherService.fetchCurrentWeather(city),
                     weatherService.fetchWeatherForecasts(city),
@@ -152,7 +152,7 @@ public class WeatherFragment extends Fragment {
         } else {
             final LocationManager locationManager = (LocationManager) getActivity()
                     .getSystemService(Context.LOCATION_SERVICE);
-            final LocationService locationService = new LocationService(locationManager, getActivity().getApplication());
+            final LocationService locationService = new LocationService(locationManager, getActivity());
             final Observable<HashMap<String, WeatherForecast>> fetchDataObservable = locationService.getLocation()
                     .timeout(LOCATION_TIMEOUT_SECONDS, TimeUnit.SECONDS)
                     .flatMap(new Func1<Location, Observable<HashMap<String, WeatherForecast>>>() {

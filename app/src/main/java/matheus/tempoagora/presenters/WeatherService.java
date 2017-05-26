@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import matheus.tempoagora.models.CurrentWeather;
 import matheus.tempoagora.models.WeatherForecast;
@@ -16,6 +17,7 @@ import rx.Observable;
 import rx.functions.Func1;
 
 public class WeatherService {
+    private static final String DISPLAY_LANGUAGE = Locale.getDefault().getDisplayLanguage();
     private static final String WEB_SERVICE_BASE_URL = "http://api.openweathermap.org/data/2.5";
     private static final String API_KEY = "ca3f3f3b4c5fe0541d35f77df61292ad";
     private final OpenWeatherMapWebService mWebService;
@@ -38,19 +40,22 @@ public class WeatherService {
     }
 
     private interface OpenWeatherMapWebService {
-        @GET("/weather?units=metric&apikey=" + API_KEY + "&lang=pt")
+
+        @GET("/weather?units=metric&apikey=" + API_KEY)
         Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("lon") double longitude,
                                                                    @Query("lat") double latitude);
-        @GET("/weather?units=metric&apikey=" + API_KEY + "&lang=pt")
+        @GET("/weather?units=metric&apikey=" + API_KEY)
         Observable<CurrentWeatherDataEnvelope> fetchCurrentWeather(@Query("q") String city);
 
-        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY + "&lang=pt")
+        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY)
         Observable<WeatherForecastListDataEnvelope> fetchWeatherForecasts(
-                @Query("lon") double longitude, @Query("lat") double latitude);
+                @Query("lon") double longitude, @Query("lat") double latitude,
+                @Query("lang") String language);
 
-        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY + "&lang=pt")
+        @GET("/forecast/daily?units=metric&cnt=7&apikey=" + API_KEY)
         Observable<WeatherForecastListDataEnvelope> fetchWeatherForecasts(
-                @Query("q") String city);
+                @Query("q") String city,
+                @Query("lang") String language);
     }
 
     public Observable<CurrentWeather> fetchCurrentWeather(final double longitude,
@@ -94,7 +99,7 @@ public class WeatherService {
     };
 
     public Observable<List<WeatherForecast>> fetchWeatherForecasts(final String city) {
-        return mWebService.fetchWeatherForecasts(city)
+        return mWebService.fetchWeatherForecasts(city, DISPLAY_LANGUAGE)
                 .flatMap(new Func1<WeatherForecastListDataEnvelope,
                         Observable<? extends WeatherForecastListDataEnvelope>>() {
 
@@ -110,7 +115,7 @@ public class WeatherService {
 
     public Observable<List<WeatherForecast>> fetchWeatherForecasts(final double longitude,
                                                                    final double latitude) {
-        return mWebService.fetchWeatherForecasts(longitude, latitude)
+        return mWebService.fetchWeatherForecasts(longitude, latitude, DISPLAY_LANGUAGE)
                 .flatMap(new Func1<WeatherForecastListDataEnvelope,
                         Observable<? extends WeatherForecastListDataEnvelope>>() {
 

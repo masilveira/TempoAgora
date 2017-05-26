@@ -1,6 +1,7 @@
 package matheus.tempoagora.presenters;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.Application;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -14,17 +15,14 @@ import android.support.v4.app.ActivityCompat;
 import rx.Observable;
 import rx.Subscriber;
 
-/**
- * Implement an Rx-style location service by wrapping the Android LocationManager and providing
- * the location result as an Observable.
- */
 public class LocationService {
+    private static final int PERMISSION_LOCATION = 32323;
     private final LocationManager mLocationManager;
-    private Application mApplication;
+    private Activity mActivity;
 
-    public LocationService(LocationManager locationManager, Application application) {
+    public LocationService(LocationManager locationManager, Activity activity) {
         mLocationManager = locationManager;
-        mApplication = application;
+        mActivity = activity;
     }
 
     public Observable<Location> getLocation() {
@@ -58,12 +56,18 @@ public class LocationService {
 
                 Looper.prepare();
 
-                if (ActivityCompat.checkSelfPermission(mApplication, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(mApplication, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
 
                     mLocationManager.requestSingleUpdate(locationProvider,
                             locationListener, Looper.myLooper());
 
                     Looper.loop();
+                }
+                else{
+                    subscriber.unsubscribe();
+                    ActivityCompat.requestPermissions(mActivity,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                            PERMISSION_LOCATION);
                 }
             }
         });
